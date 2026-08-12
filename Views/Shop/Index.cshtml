@@ -1,0 +1,561 @@
+@{
+    ViewData["Title"] = "Shop";
+    Layout = null;
+}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>Middle — Shop</title>
+  <style>
+    @@font-face { font-family:"Filson Soft"; src:url("./fonts/FilsonSoft-Regular.woff2") format("woff2"); font-weight:400; font-style:normal; font-display:swap; }
+    @@font-face { font-family:"Filson Soft"; src:url("./fonts/FilsonSoft-Medium.woff2") format("woff2"); font-weight:500; font-style:normal; font-display:swap; }
+    @@font-face { font-family:"Filson Soft"; src:url("./fonts/FilsonSoft-Bold.woff2") format("woff2"); font-weight:700; font-style:normal; font-display:swap; }
+
+    :root {
+      --teal:#03a9ad;
+      --teal-dark:#008f98;
+      --teal-soft:#67c7c1;
+      --teal-softest:#dff7f7;
+      --ink:#202124;
+      --muted:#737373;
+      --panel:#ffffff;
+      --soft:#f3f2f3;
+      --soft-2:#f7f6f7;
+      --line:#eceaec;
+      --gutter:24px;
+      --phone-width:414px;
+    }
+
+    * { box-sizing:border-box; }
+    html,body { margin:0; min-height:100%; }
+    body {
+      min-height:100dvh;
+      display:flex;
+      justify-content:center;
+      background:#373838;
+      font-family:"Filson Soft","Avenir Next",Arial,sans-serif;
+      color:var(--ink);
+    }
+    button,input { font:inherit; }
+    button { color:inherit; }
+
+    .mobile-app {
+      width:100%;
+      max-width:var(--phone-width);
+      min-height:100dvh;
+      overflow:hidden;
+      box-shadow:0 0 52px rgba(0,0,0,.20);
+      background:
+        radial-gradient(circle at 88% 7%, rgba(255,255,255,.20), transparent 28%),
+        radial-gradient(circle at 12% 88%, rgba(255,255,255,.10), transparent 24%),
+        linear-gradient(160deg, #54c3c0 0%, #12aaad 44%, #008d97 100%);
+    }
+
+    .top-panel {
+      position:relative;
+      min-height:0;
+      padding:max(42px,env(safe-area-inset-top)) var(--gutter) 34px;
+      color:#fff;
+      background:transparent;
+    }
+
+    .topbar { display:flex; align-items:center; justify-content:space-between; gap:14px; }
+    .shop-logo {
+      display:block;
+      width:150px;
+      max-width:52%;
+      height:auto;
+      filter:brightness(0) invert(1);
+    }
+    .cart-button {
+      position:relative;
+      width:50px;
+      height:50px;
+      flex:0 0 50px;
+      display:grid;
+      place-items:center;
+      border:0;
+      border-radius:50%;
+      background:#fff;
+      cursor:pointer;
+      box-shadow:0 4px 14px rgba(0,77,83,.12);
+    }
+    .cart-button svg { width:25px; height:25px; }
+    .cart-count {
+      position:absolute;
+      right:-5px;
+      top:-4px;
+      min-width:21px;
+      height:21px;
+      padding:0 6px;
+      display:grid;
+      place-items:center;
+      border:0;
+      border-radius:999px;
+      background:var(--teal);
+      color:#fff;
+      font-size:10px;
+      font-weight:700;
+      line-height:1;
+    }
+
+    .delivery-grid {
+      display:grid;
+      grid-template-columns:repeat(2,minmax(0,1fr));
+      gap:16px;
+      margin-top:34px;
+    }
+    .delivery-card { min-width:0; }
+    .delivery-card:last-child { text-align:left; }
+    .delivery-label {
+      margin:0 0 8px;
+      font-size:11px;
+      font-weight:700;
+      line-height:1.18;
+      letter-spacing:.02em;
+      text-transform:uppercase;
+    }
+    .delivery-main {
+      display:flex;
+      align-items:center;
+      gap:7px;
+      min-width:0;
+      font-size:17px;
+      line-height:1.1;
+      font-weight:500;
+    }
+    .delivery-card:last-child .delivery-main { justify-content:flex-start; }
+    .delivery-main span {
+      min-width:0;
+      overflow:hidden;
+      text-overflow:ellipsis;
+      white-space:nowrap;
+    }
+    .delivery-main svg { width:14px; height:14px; flex:0 0 auto; }
+    .delivery-address {
+      margin:5px 0 0;
+      overflow:hidden;
+      text-overflow:ellipsis;
+      white-space:nowrap;
+      font-size:9.8px;
+      font-weight:700;
+      letter-spacing:.015em;
+      color:rgba(255,255,255,.83);
+      text-transform:uppercase;
+    }
+
+    .content-panel {
+      position:relative;
+      z-index:2;
+      margin-top:-8px;
+      min-height:calc(100dvh - 210px);
+      padding:22px var(--gutter) calc(112px + env(safe-area-inset-bottom));
+      background:#fff;
+      border-radius:52px 52px 0 0;
+      box-shadow:0 -8px 30px rgba(0,89,93,.06);
+    }
+
+    .search-row {
+      display:grid;
+      grid-template-columns:minmax(0,1fr) auto;
+      align-items:center;
+      gap:12px;
+      min-width:0;
+    }
+    .search-box {
+      height:52px;
+      display:flex;
+      align-items:center;
+      gap:11px;
+      padding:0 16px;
+      min-width:0;
+      background:#efedef;
+      border-radius:999px;
+    }
+    .search-box svg { width:21px; height:21px; flex:0 0 auto; }
+    .search-box input {
+      width:100%;
+      min-width:0;
+      border:0;
+      outline:0;
+      background:transparent;
+      color:#333;
+      font-size:14.5px;
+    }
+    .search-box input::placeholder { color:#333; opacity:1; }
+    .attach-po-button {
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      gap:8px;
+      width:112px;
+      min-width:112px;
+      height:52px;
+      padding:0 8px 0 14px;
+      border:0;
+      border-radius:999px;
+      background:var(--teal);
+      color:#fff;
+      font-size:12px;
+      line-height:1.05;
+      font-weight:700;
+      text-align:left;
+      cursor:pointer;
+      box-shadow:0 8px 18px rgba(3,169,173,.18);
+    }
+    .attach-po-button svg {
+      width:25px;
+      height:25px;
+      flex:0 0 auto;
+      transform:rotate(45deg);
+      transform-origin:center;
+    }
+
+    .category-grid {
+      display:flex;
+      align-items:flex-start;
+      gap:12px;
+      margin-top:22px;
+      padding-bottom:4px;
+      overflow-x:auto;
+      overflow-y:hidden;
+      scrollbar-width:none;
+      -webkit-overflow-scrolling:touch;
+    }
+    .category-grid::-webkit-scrollbar { display:none; }
+    .category-item {
+      flex:0 0 86px;
+      width:86px;
+      display:flex;
+      flex-direction:column;
+      align-items:center;
+      gap:5px;
+      border:0;
+      padding:0;
+      background:transparent;
+      cursor:pointer;
+      text-align:center;
+    }
+    .category-circle {
+      width:50px;
+      height:50px;
+      display:grid;
+      place-items:center;
+      border-radius:50%;
+      background:var(--soft);
+      border:2px solid transparent;
+      color:#565a5d;
+      transition:transform .16s ease, border-color .16s ease, background .16s ease, color .16s ease;
+    }
+    .category-circle svg { width:22px; height:22px; stroke-width:1.8; }
+    .category-name {
+      display:block;
+      max-width:none;
+      color:#2e3134;
+      font-size:9.4px;
+      font-weight:700;
+      line-height:1.15;
+      letter-spacing:.01em;
+      text-transform:uppercase;
+      white-space:nowrap;
+      word-break:normal;
+    }
+    .category-item.active .category-circle {
+      background:var(--teal-softest);
+      border-color:var(--teal);
+      color:var(--teal);
+      box-shadow:0 6px 14px rgba(3,169,173,.10);
+    }
+    .category-item.active .category-name { color:var(--teal); }
+    .category-item:active .category-circle { transform:scale(.98); }
+
+
+    .products {
+      display:grid;
+      grid-template-columns:repeat(3,minmax(0,1fr));
+      gap:18px 16px;
+      margin-top:24px;
+    }
+    .product-card {
+      position:relative;
+      z-index:1;
+      display:flex;
+      flex-direction:column;
+      align-items:stretch;
+      gap:10px;
+      border:0;
+      padding:0;
+      background:transparent;
+      text-align:center;
+      cursor:pointer;
+    }
+    .product-card.selected { z-index:3; }
+    .product-box {
+      position:relative;
+      width:100%;
+      aspect-ratio:0.95;
+      padding:0;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      background:transparent;
+      border:3px solid transparent;
+      border-radius:22px;
+      overflow:visible;
+      transition:border-color .16s ease, box-shadow .16s ease, transform .16s ease;
+    }
+    .product-card.selected .product-box {
+      border-color:var(--teal);
+      box-shadow:0 4px 12px rgba(3,169,173,.08);
+    }
+    .product-card:active .product-box { transform:scale(.985); }
+    .product-image {
+      width:100%;
+      height:100%;
+      padding:0;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      overflow:hidden;
+      background:#fff;
+      border-radius:18px;
+    }
+    .product-image img {
+      display:block;
+      width:100%;
+      height:100%;
+      object-fit:cover;
+      object-position:center 44%;
+      transform:translateX(-2.5%) scale(1.08);
+      transform-origin:center 44%;
+      border-radius:18px;
+    }
+    .qty-badge {
+      position:absolute;
+      right:-8px;
+      top:-8px;
+      width:22px;
+      min-width:22px;
+      height:22px;
+      padding:1px 0 0;
+      display:none;
+      align-items:center;
+      justify-content:center;
+      text-align:center;
+      border:0;
+      border-radius:50%;
+      background:#10ad52;
+      color:#fff;
+      font-size:11px;
+      font-weight:700;
+      line-height:1;
+      font-variant-numeric:tabular-nums;
+      box-shadow:0 4px 10px rgba(0,0,0,.12);
+      z-index:10;
+      pointer-events:none;
+    }
+    .product-card.selected .qty-badge { display:flex; }
+    .product-name {
+      display:block;
+      min-height:32px;
+      overflow:hidden;
+      text-overflow:ellipsis;
+      white-space:nowrap;
+      color:#626262;
+      font-size:12px;
+      line-height:1.25;
+    }
+    .product-card.selected .product-name { color:var(--teal); font-weight:700; }
+
+    .bottom-nav {
+      position:fixed;
+      z-index:50;
+      left:50%;
+      bottom:0;
+      width:min(100%, var(--phone-width));
+      transform:translateX(-50%);
+      display:grid;
+      grid-template-columns:repeat(5,1fr);
+      margin:0;
+      padding:18px 18px max(25px,env(safe-area-inset-bottom));
+      background:#fff;
+      border-top:1px solid #f2f0f2;
+      box-shadow:0 -12px 28px rgba(20,20,20,.055);
+    }
+    .nav-item {
+      display:flex;
+      flex-direction:column;
+      align-items:center;
+      justify-content:flex-end;
+      gap:7px;
+      min-width:0;
+      color:#111;
+      text-decoration:none;
+      font-size:8.5px;
+      line-height:1.05;
+      text-align:center;
+      text-transform:uppercase;
+    }
+    .nav-item svg { width:31px; height:31px; stroke-width:1.5; }
+    .nav-item.small-copy span { font-size:7px; max-width:60px; }
+
+    @media (max-width:380px) {
+      :root { --gutter:20px; }
+      .shop-logo { width:142px; }
+      .delivery-grid { gap:12px; }
+      .delivery-label { font-size:9.5px; }
+      .delivery-main { font-size:15px; }
+      .category-grid { gap:10px; }
+      .category-item { flex-basis:82px; width:82px; }
+      .category-circle { width:46px; height:46px; }
+      .category-name { font-size:8.8px; max-width:none; white-space:nowrap; }
+      .products { gap:16px 12px; }
+      .product-box { border-radius:20px; padding:0; }
+      .attach-po-button { width:100px; min-width:100px; height:48px; font-size:10.8px; padding:0 9px 0 13px; }
+      .attach-po-button svg { width:22px; height:22px; }
+      .product-name { font-size:11.4px; }
+    }
+  </style>
+</head>
+<body>
+  <main class="mobile-app">
+    <section class="top-panel">
+      <div class="topbar">
+        <img class="shop-logo" src="/images/middle-logo.png" alt="Middle" />
+        <button class="cart-button" aria-label="Shopping cart">
+          <svg viewBox="0 0 32 32" fill="none" stroke="#111" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6h3l2.1 13.2h14.7L27 10H8.2"/><path d="M10 12h15M11 15.5h13M12 19h11M12 10l1 9M17 10v9M22 10l-1 9"/><circle cx="12" cy="24.5" r="1.4"/><circle cx="23" cy="24.5" r="1.4"/></svg>
+          <span class="cart-count" id="cartCount">3</span>
+        </button>
+      </div>
+
+      <div class="delivery-grid">
+        <div class="delivery-card">
+          <p class="delivery-label">Deliver consumables to</p>
+          <div class="delivery-main"><span>Cebu Fedco...</span><svg viewBox="0 0 16 16" fill="none"><path d="m3 6 5 5 5-5" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+          <p class="delivery-address">526 A MORALES ST. KAMPUTHAW GROV...</p>
+        </div>
+        <div class="delivery-card">
+          <p class="delivery-label">Install analyzers to</p>
+          <div class="delivery-main"><span>Cebu Fedco...</span><svg viewBox="0 0 16 16" fill="none"><path d="m3 6 5 5 5-5" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+          <p class="delivery-address">526 A MORALES ST. KAMPUTHAW GROV...</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="content-panel">
+      <div class="search-row">
+        <label class="search-box">
+          <svg viewBox="0 0 24 24" fill="none" stroke="#222" stroke-width="1.8" stroke-linecap="round"><circle cx="10.8" cy="10.8" r="6.8"/><path d="m16 16 4.2 4.2"/></svg>
+          <input id="productSearch" type="search" placeholder="Search" aria-label="Search products" />
+        </label>
+        <button class="attach-po-button" type="button" aria-label="Attach PO File"><span>Attach<br />PO File</span><svg viewBox="0 0 32 42" fill="none" stroke="currentColor" stroke-width="2.7" stroke-linecap="round"><path d="M23.5 11v18.5a8 8 0 0 1-16 0V9.3a6 6 0 0 1 12 0v18.8a3.6 3.6 0 0 1-7.2 0V12"/></svg></button>
+      </div>
+
+      <div class="category-grid" aria-label="Product categories">
+        <button class="category-item active" type="button">
+          <span class="category-circle"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M7 6.5V18M17 6.5V18M12 4v16"/><path d="M5 9h14M5 15h14" stroke-linecap="round"/></svg></span>
+          <span class="category-name">Hematology</span>
+        </button>
+        <button class="category-item" type="button">
+          <span class="category-circle"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M8.5 4.5v5.7l-2.8 5a4.4 4.4 0 0 0 3.8 6.5h5a4.4 4.4 0 0 0 3.8-6.5l-2.8-5V4.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M8.6 10.2h6.8"/></svg></span>
+          <span class="category-name">Chemistry</span>
+        </button>
+        <button class="category-item" type="button">
+          <span class="category-circle"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="12" r="6.5"/><path d="M12 8v4l2.8 2.1" stroke-linecap="round"/></svg></span>
+          <span class="category-name">Immunology</span>
+        </button>
+        <button class="category-item" type="button">
+          <span class="category-circle"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M7 7h10M7 12h10M7 17h10" stroke-linecap="round"/><path d="M5 5.5h14v13H5z"/></svg></span>
+          <span class="category-name">Electrolyte</span>
+        </button>
+        <button class="category-item" type="button">
+          <span class="category-circle"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M12 5v14M7 10.5h10" stroke-linecap="round"/><circle cx="12" cy="12" r="7"/></svg></span>
+          <span class="category-name">Coagulation</span>
+        </button>
+        <button class="category-item" type="button">
+          <span class="category-circle"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M6.5 7.5h11v9h-11z"/><path d="M9 5.5h6M12 11v2.5M9.5 13.5h5" stroke-linecap="round"/></svg></span>
+          <span class="category-name">Serology</span>
+        </button>
+        <button class="category-item" type="button">
+          <span class="category-circle"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="9" cy="9" r="3.5"/><circle cx="15.5" cy="14.5" r="4.5"/><path d="M4.5 18c1.5-1.8 3.1-2.7 4.9-2.7" stroke-linecap="round"/></svg></span>
+          <span class="category-name">Microbiology</span>
+        </button>
+      </div>
+
+
+      <div class="products" id="productGrid">
+        <button class="product-card selected" type="button" data-name="1 x Analyzer Name" data-qty="3" data-fixed="true" aria-pressed="true">
+          <span class="product-box"><span class="qty-badge">3</span><span class="product-image"><img src="/images/products/hema500.jpg" alt="Hemaline 500 analyzer" /></span></span>
+          <span class="product-name">1 x Analyzer Name</span>
+        </button>
+        <button class="product-card" type="button" data-name="Analyzer Name" data-qty="1">
+          <span class="product-box"><span class="qty-badge">1</span><span class="product-image"><img src="/images/products/hema500.jpg" alt="Hemaline 500 analyzer" /></span></span>
+          <span class="product-name">Analyzer Name</span>
+        </button>
+        <button class="product-card" type="button" data-name="Analyzer Name" data-qty="1">
+          <span class="product-box"><span class="qty-badge">1</span><span class="product-image"><img src="/images/products/hema500.jpg" alt="Hemaline 500 analyzer" /></span></span>
+          <span class="product-name">Analyzer Name</span>
+        </button>
+        <button class="product-card" type="button" data-name="Analyzer Name" data-qty="1">
+          <span class="product-box"><span class="qty-badge">1</span><span class="product-image"><img src="/images/products/hema500.jpg" alt="Hemaline 500 analyzer" /></span></span>
+          <span class="product-name">Analyzer Name</span>
+        </button>
+        <button class="product-card" type="button" data-name="Analyzer Name" data-qty="1">
+          <span class="product-box"><span class="qty-badge">1</span><span class="product-image"><img src="/images/products/hema500.jpg" alt="Hemaline 500 analyzer" /></span></span>
+          <span class="product-name">Analyzer Name</span>
+        </button>
+        <button class="product-card" type="button" data-name="Analyzer Name" data-qty="1">
+          <span class="product-box"><span class="qty-badge">1</span><span class="product-image"><img src="/images/products/hema500.jpg" alt="Hemaline 500 analyzer" /></span></span>
+          <span class="product-name">Analyzer Name</span>
+        </button>
+      </div>
+
+      <nav class="bottom-nav" aria-label="Main navigation">
+        <a class="nav-item" href="#"><svg viewBox="0 0 36 36" fill="none" stroke="currentColor"><path d="M5 15.2 18 6l13 9.2V31H21v-9h-6v9H5V15.2Z" stroke-linejoin="round"/></svg><span>Shop</span></a>
+        <a class="nav-item" href="#"><svg viewBox="0 0 36 36" fill="none" stroke="currentColor"><rect x="8" y="4" width="21" height="28" rx="2"/><path d="M12 10h13M12 15h13M12 20h9"/><circle cx="27" cy="28" r="6" fill="#fff"/><path d="M27 25v3l2 1"/></svg><span>Orders</span></a>
+        <a class="nav-item" href="#"><svg viewBox="0 0 36 36" fill="none" stroke="currentColor"><path d="M8 11h20a3 3 0 0 1 3 3v15H8a3 3 0 0 1-3-3V14a3 3 0 0 1 3-3Z"/><path d="M12 11V8h5v3M21 11V8h4v3M25 18h8v8h-8a4 4 0 0 1 0-8Z"/></svg><span>Payment</span></a>
+        <a class="nav-item small-copy" href="#"><svg viewBox="0 0 36 36" fill="none" stroke="currentColor"><rect x="8" y="4" width="22" height="28" rx="2"/><rect x="11" y="8" width="16" height="10" rx="1"/><path d="M11 23h16M11 27h16"/></svg><span>Machines<br />Installed</span></a>
+        <a class="nav-item" href="#"><svg viewBox="0 0 36 36" fill="none" stroke="currentColor"><circle cx="18" cy="10" r="6"/><path d="M7 31c.8-8 4.6-12 11-12s10.2 4 11 12H7Z"/></svg><span>Account</span></a>
+      </nav>
+    </section>
+  </main>
+
+  <script>
+    const cards = [...document.querySelectorAll('.product-card')];
+    const cartCount = document.getElementById('cartCount');
+    const search = document.getElementById('productSearch');
+    const categoryItems = [...document.querySelectorAll('.category-item')];
+
+    function refreshCount() {
+      cartCount.textContent = cards.filter(card => card.classList.contains('selected')).reduce((sum, card) => sum + Number(card.dataset.qty || 1), 0);
+    }
+
+    cards.forEach(card => card.addEventListener('click', () => {
+      if (card.dataset.fixed === 'true') {
+        card.classList.add('selected');
+        card.setAttribute('aria-pressed', 'true');
+        return;
+      }
+      card.classList.toggle('selected');
+      card.setAttribute('aria-pressed', String(card.classList.contains('selected')));
+      refreshCount();
+    }));
+
+    categoryItems.forEach(item => item.addEventListener('click', () => {
+      categoryItems.forEach(btn => btn.classList.remove('active'));
+      item.classList.add('active');
+    }));
+
+    search.addEventListener('input', () => {
+      const q = search.value.trim().toLowerCase();
+      cards.forEach(card => {
+        card.hidden = q && !card.dataset.name.toLowerCase().includes(q);
+      });
+    });
+
+    refreshCount();
+  </script>
+</body>
+</html>
